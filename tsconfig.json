@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@virentia/storage-core": ["packages/core/lib/index.ts"]
+    }
+  },
+  "include": [
+    "packages/core/lib/**/*.ts",
+    "packages/core/tests/**/*.ts",
+    "packages/core/tsdown.config.ts"
+  ]
+}

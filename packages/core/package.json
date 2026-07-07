@@ -1,0 +1,46 @@
+{
+  "name": "@virentia/storage-core",
+  "version": "0.0.0",
+  "description": "",
+  "keywords": [],
+  "homepage": "https://movpushmov.dev/virentia/storage/core/",
+  "bugs": {
+    "url": "https://github.com/virentia-labs/storage/issues"
+  },
+  "license": "MIT",
+  "author": "movpushmov",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/virentia-labs/storage.git",
+    "directory": "packages/core"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "@virentia/core": "^0.6.0"
+  },
+  "devDependencies": {
+    "@virentia/core": "^0.6.3",
+    "jsdom": "^25.0.1"
+  }
+}
