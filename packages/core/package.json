@@ -34,13 +34,14 @@
   "scripts": {
     "build": "tsdown",
     "test": "vitest run",
-    "test:watch": "vitest"
-  },
-  "peerDependencies": {
-    "@virentia/core": "^0.6.0"
+    "test:watch": "vitest",
+    "test:types": "tsc --noEmit -p ../../tsconfig.json"
   },
   "devDependencies": {
     "@virentia/core": "^0.6.3",
     "jsdom": "^25.0.1"
+  },
+  "peerDependencies": {
+    "@virentia/core": "^0.6.0"
   }
 }
