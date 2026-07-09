@@ -5,7 +5,7 @@ function run(command, args) {
   console.log(`\n> ${command} ${args.join(" ")}`);
 
   const result = spawnSync(command, args, {
-    stdio: "inherit"
+    stdio: "inherit",
   });
 
   if (result.error) {
@@ -53,4 +53,6 @@ run("pnpm", ["typecheck"]);
 run("pnpm", ["test"]);
 run("pnpm", ["build"]);
 
-console.log("\nRelease is prepared. Commit the generated changes, push main, then run the Release workflow.");
+console.log(
+  "\nRelease is prepared. Commit the generated changes, push main, then run the Release workflow.",
+);

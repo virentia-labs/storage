@@ -14,13 +14,13 @@ pnpm add @virentia/storage-core @virentia/core
 
 A **box** is a small backend the library reads from and writes to. Five are built in:
 
-| Box | Backing store | Survives | Cross-context sync |
-|-----|---------------|----------|--------------------|
-| `local()` | `localStorage` | reloads, restarts | other tabs (`storage` event) |
-| `session()` | `sessionStorage` | reloads (per tab) | — |
-| `query()` | URL `?key=value` | in the URL / history | back / forward (`popstate`) |
-| `memory()` | in-process `Map` | the session | same process |
-| `custom(impl)` | anything you supply | up to you | up to you |
+| Box            | Backing store       | Survives             | Cross-context sync           |
+| -------------- | ------------------- | -------------------- | ---------------------------- |
+| `local()`      | `localStorage`      | reloads, restarts    | other tabs (`storage` event) |
+| `session()`    | `sessionStorage`    | reloads (per tab)    | —                            |
+| `query()`      | URL `?key=value`    | in the URL / history | back / forward (`popstate`)  |
+| `memory()`     | in-process `Map`    | the session          | same process                 |
+| `custom(impl)` | anything you supply | up to you            | up to you                    |
 
 The DOM-backed boxes fall back to `memory()` when their environment is missing (SSR, workers) or blocked (private mode), so the same model code runs on the server unchanged.
 
@@ -50,12 +50,12 @@ scoped(app, () => {
 
 ```ts
 persist({
-  source,        // StoreWritable<T> — the store to persist
-  key,           // string — the box key
-  storage,       // StorageBox — local() | session() | query() | memory() | custom()
-  scope,         // Scope — defaults to the current active scope
-  serialize,     // (value: T) => unknown — value → stored form
-  deserialize,   // (raw: unknown) => T — stored form → value
+  source, // StoreWritable<T> — the store to persist
+  key, // string — the box key
+  storage, // StorageBox — local() | session() | query() | memory() | custom()
+  scope, // Scope — defaults to the current active scope
+  serialize, // (value: T) => unknown — value → stored form
+  deserialize, // (raw: unknown) => T — stored form → value
 });
 ```
 
