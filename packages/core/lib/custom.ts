@@ -23,8 +23,15 @@ export interface CustomStorage {
 export function custom(storage: CustomStorage): StorageBox {
   return {
     get: (key) => storage.get(key),
-    set: (key, value) => storage.set(key, value),
+    // Uphold the absence-sentinel contract even for third-party backends:
+    // set(key, undefined) is a removal, so the backend never holds `undefined`.
+    set: (key, value) => (value === undefined ? storage.remove(key) : storage.set(key, value)),
     remove: (key) => storage.remove(key),
-    watch: storage.watch ? (key, listener) => storage.watch!(key, listener) : undefined,
+    // Presence is decided by an actual function, not mere truthiness, so a
+    // malformed backend can't produce a `watch` that throws when called.
+    watch:
+      typeof storage.watch === "function"
+        ? (key, listener) => storage.watch!(key, listener)
+        : undefined,
   };
 }

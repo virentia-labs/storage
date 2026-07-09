@@ -49,8 +49,7 @@ export function query(options: QueryBoxOptions = {}): StorageBox {
 
   const commit = (next: URLSearchParams) => {
     const search = next.toString();
-    const url =
-      window.location.pathname + (search ? `?${search}` : "") + window.location.hash;
+    const url = window.location.pathname + (search ? `?${search}` : "") + window.location.hash;
 
     if (mode === "push") {
       window.history.pushState(window.history.state, "", url);
@@ -72,7 +71,15 @@ export function query(options: QueryBoxOptions = {}): StorageBox {
     },
     set(key, value) {
       const next = params();
-      next.set(key, serializer.write(value));
+      const encoded = serializer.write(value);
+      // Non-string encodings (e.g. `JSON.stringify(undefined)`) mean the value
+      // is unrepresentable — drop the param rather than write the literal
+      // `?key=undefined`, keeping `get(key) === undefined` equivalent to absent.
+      if (typeof encoded !== "string") {
+        next.delete(key);
+      } else {
+        next.set(key, encoded);
+      }
       commit(next);
     },
     remove(key) {

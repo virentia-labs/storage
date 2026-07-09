@@ -82,10 +82,19 @@ export function persist<T>(options: PersistOptions<T>): () => void {
     push(scoped(scope, () => source.value));
   }
 
-  // 2. store → box (only for this scope, only for changes we didn't cause)
+  // 2. store → box (only for this scope, only for changes we didn't cause).
+  // The store's notify loop does NOT isolate subscribers, so a persistence
+  // failure here (e.g. a value the serializer can't encode) must not escape:
+  // it would starve sibling subscribers and throw into the code that committed
+  // the change. Isolate it — the value simply isn't persisted. (Hydrate above
+  // is deliberately *not* isolated: a setup-time error is fail-fast.)
   const unsubscribe = source.subscribe((value, changedScope) => {
     if (busy || changedScope !== scope) return;
-    push(value);
+    try {
+      push(value);
+    } catch {
+      /* this value could not be persisted; the reactive graph stays intact */
+    }
   });
 
   // 3. box → store
@@ -94,7 +103,11 @@ export function persist<T>(options: PersistOptions<T>): () => void {
     // Key removed externally: keep the current in-memory value rather than
     // clobbering it with `undefined`.
     if (raw === undefined) return;
-    pull(raw);
+    try {
+      pull(raw);
+    } catch {
+      /* a malformed external value can't be applied; keep the current one */
+    }
   });
 
   const stop = () => {

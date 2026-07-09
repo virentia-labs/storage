@@ -49,7 +49,16 @@ function createWebStorageBox(
       }
     },
     set(key, value) {
-      store.setItem(key, serializer.write(value));
+      const encoded = serializer.write(value);
+      // A serializer that cannot represent the value returns a non-string
+      // (`JSON.stringify(undefined)` is `undefined`). Treat that as removal so
+      // the box never stores the literal `"undefined"` and `get(key) ===
+      // undefined` always means "absent".
+      if (typeof encoded !== "string") {
+        store.removeItem(key);
+        return;
+      }
+      store.setItem(key, encoded);
     },
     remove(key) {
       store.removeItem(key);

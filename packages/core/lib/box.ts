@@ -4,14 +4,19 @@
  * that speaks strings underneath (Web Storage, the URL) owns its own
  * serialization; a box that keeps references (memory) does not serialize at all.
  *
- * `get` returns `undefined` when the key is absent. `watch` is optional: a box
- * implements it only when it can observe **external** changes (another tab, the
- * back/forward button). Boxes that cannot never fire it.
+ * `undefined` is the **absence sentinel**: `get` returns `undefined` when the
+ * key is absent, and `set(key, undefined)` is equivalent to `remove(key)`. A
+ * box therefore never holds a value that `get` would report as absent, so
+ * `get(key) === undefined` reliably means "not stored".
+ *
+ * `watch` is optional: a box implements it only when it can observe **external**
+ * changes (another tab, the back/forward button). Boxes that cannot never fire
+ * it (check presence with `typeof box.watch` / an optional call).
  */
 export interface StorageBox {
   /** Read the value stored under `key`, or `undefined` when absent. */
   get(key: string): unknown;
-  /** Persist `value` under `key`. */
+  /** Persist `value` under `key`. Setting `undefined` removes the key. */
   set(key: string, value: unknown): void;
   /** Delete `key`. */
   remove(key: string): void;
@@ -19,6 +24,12 @@ export interface StorageBox {
    * Observe external changes to `key`. The listener receives the new value, or
    * `undefined` when the key was removed. Returns an unsubscribe function.
    * Absent on boxes that cannot detect outside writes.
+   *
+   * A box **must** report its own writes (the echo of a `set`/`remove` on this
+   * box) either **synchronously**, within the mutating call, or **not at all**.
+   * `persist` suppresses those echoes with a synchronous guard; a box that
+   * announced its own writes on a later tick would make `persist` mistake them
+   * for external changes.
    */
   watch?(key: string, listener: (value: unknown) => void): () => void;
 }
