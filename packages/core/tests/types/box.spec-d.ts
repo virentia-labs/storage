@@ -12,7 +12,7 @@ import {
   type StorageBox,
   type StringBoxOptions,
 } from "../../lib";
-import type { Assert, Equal } from "../support/type-level";
+import type { Assert, Equal, IsAny } from "../support/type-level";
 
 // ── exact shapes of the public interfaces ────────────────────────────────────
 type _P1 = Assert<
@@ -55,6 +55,13 @@ type _P11 = Assert<
   >
 >;
 type _P12 = Assert<Equal<CustomStorage, StorageBox>>;
+
+// ── no `any` on the public surface (an `any` would make the Equals above vacuous) ─
+type _NA1 = Assert<Equal<IsAny<ReturnType<StorageBox["get"]>>, false>>;
+type _NA2 = Assert<Equal<IsAny<Parameters<StorageBox["set"]>[1]>, false>>;
+type _NA3 = Assert<Equal<IsAny<ReturnType<Serializer["read"]>>, false>>;
+type _NA4 = Assert<Equal<IsAny<Parameters<Serializer["write"]>[0]>, false>>;
+type _NA5 = Assert<Equal<IsAny<ReturnType<CustomStorage["get"]>>, false>>;
 
 // ── box / serializer shape violations ────────────────────────────────────────
 // @ts-expect-error N18 — `remove` missing.

@@ -17,7 +17,7 @@ import {
   type StorageBox,
   type StringBoxOptions,
 } from "../../lib";
-import type { Assert, Equal, Extends } from "../support/type-level";
+import type { Assert, Equal, Extends, IsAny } from "../support/type-level";
 
 // ── factory return + serializer + parameter types ────────────────────────────
 type _P21a = Assert<Equal<ReturnType<typeof memory>, StorageBox>>;
@@ -34,6 +34,11 @@ type _P26 = Assert<Equal<Parameters<typeof custom>, [storage: CustomStorage]>>;
 type _P27 = Assert<
   Equal<Parameters<typeof memory>, [initial?: Iterable<readonly [string, unknown]>]>
 >;
+
+// no factory returns `any` (an `any` return would pass the Equal checks above).
+type _NAf1 = Assert<Equal<IsAny<ReturnType<typeof memory>>, false>>;
+type _NAf2 = Assert<Equal<IsAny<ReturnType<typeof local>>, false>>;
+type _NAf3 = Assert<Equal<IsAny<ReturnType<typeof custom>>, false>>;
 
 // ── assignability of concrete serializers ────────────────────────────────────
 type _P34b = Assert<Extends<typeof jsonSerializer, Serializer>>;

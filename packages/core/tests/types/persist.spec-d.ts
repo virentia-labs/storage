@@ -12,7 +12,7 @@ import {
 } from "@virentia/core";
 
 import { memory, persist, type PersistOptions, type StorageBox } from "../../lib";
-import type { Assert, Equal, Extends } from "../support/type-level";
+import type { Assert, Equal, Extends, IsAny } from "../support/type-level";
 
 const box = memory();
 
@@ -42,6 +42,15 @@ type _P19 = Assert<
 >;
 type _P20 = Assert<Equal<ReturnType<typeof persist<number>>, () => void>>;
 type _P34a = Assert<Extends<StoreWritable<number>, PersistOptions<number>["source"]>>;
+
+// no `any` on the transform surface: deserialize's raw is `unknown` (not `any`,
+// which would silently pass N10's narrowing test), serialize returns `unknown`.
+type _NAp1 = Assert<
+  Equal<IsAny<Parameters<NonNullable<PersistOptions<number>["deserialize"]>>[0]>, false>
+>;
+type _NAp2 = Assert<
+  Equal<IsAny<ReturnType<NonNullable<PersistOptions<number>["serialize"]>>>, false>
+>;
 
 // ── generic inference through persist ────────────────────────────────────────
 // T inferred = number; return () => void.

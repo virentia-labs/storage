@@ -164,4 +164,29 @@ describe("memory watch", () => {
       expect(() => box.set("k", 1)).not.toThrow();
     });
   });
+
+  describe("during a notification", () => {
+    it("stops a sibling that a running listener unsubscribes before it is reached", () => {
+      const box = memory();
+      const order: string[] = [];
+      let unB: () => void = () => {};
+      box.watch!("k", () => {
+        order.push("a");
+        unB(); // detach the not-yet-notified sibling mid-emit
+      });
+      unB = box.watch!("k", () => order.push("b"));
+      box.set("k", 1);
+      expect(order).toEqual(["a"]); // b was detached before the emit reached it
+    });
+
+    it("lets a listener unsubscribe itself without throwing or skipping siblings", () => {
+      const box = memory();
+      const after = vi.fn();
+      let unSelf: () => void = () => {};
+      unSelf = box.watch!("k", () => unSelf());
+      box.watch!("k", after);
+      expect(() => box.set("k", 1)).not.toThrow();
+      expect(after).toHaveBeenCalledWith(1);
+    });
+  });
 });
