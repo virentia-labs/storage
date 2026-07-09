@@ -1,7 +1,7 @@
 // @vitest-environment node
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 
-import { local, query, session } from "../lib";
+import { local, query, session } from "../../lib";
 
 // In a pure Node environment there is no `window`, `localStorage`, or
 // `sessionStorage`. Every DOM-backed box must degrade to an in-memory box so
@@ -11,11 +11,11 @@ describe.each([
   ["session", session],
   ["query", query],
 ])("%s falls back to memory outside the browser", (_name, factory) => {
-  test("constructs without throwing", () => {
+  it("constructs without throwing", () => {
     expect(() => factory()).not.toThrow();
   });
 
-  test("behaves as an in-memory box (reference semantics, no serialization)", () => {
+  it("stores by reference, without serializing", () => {
     const box = factory();
     const value = { a: 1 };
     box.set("k", value);
@@ -24,7 +24,7 @@ describe.each([
     expect(box.get("k")).toBeUndefined();
   });
 
-  test("watch is present (the memory fallback) and fires on same-process writes", () => {
+  it("exposes a working watch that fires on same-process writes", () => {
     const box = factory();
     const seen: unknown[] = [];
     box.watch!("k", (v) => seen.push(v));
@@ -32,7 +32,7 @@ describe.each([
     expect(seen).toEqual([1]);
   });
 
-  test("fallback boxes do not share state", () => {
+  it("does not share state between instances", () => {
     const a = factory();
     const b = factory();
     a.set("k", 1);
