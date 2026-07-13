@@ -38,10 +38,10 @@
     "test:types": "tsc --noEmit -p ../../tsconfig.json"
   },
   "devDependencies": {
-    "@virentia/core": "^0.6.4",
+    "@virentia/core": "^0.7.0",
     "jsdom": "^25.0.1"
   },
   "peerDependencies": {
-    "@virentia/core": "^0.6.0"
+    "@virentia/core": "^0.7.0"
   }
 }

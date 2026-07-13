@@ -30,8 +30,8 @@ importers:
   packages/core:
     devDependencies:
       '@virentia/core':
-        specifier: ^0.6.4
-        version: 0.6.4
+        specifier: ^0.7.0
+        version: 0.7.0
       jsdom:
         specifier: ^25.0.1
         version: 25.0.1
@@ -871,8 +871,8 @@ packages:
   '@types/node@26.1.0':
     resolution: {integrity: sha512-O0A1G3xPGy4w7AgQdAQYUlQ+BKk2Oovw8eRpofyp5KdBZULnbe+WqaOVNrm705SHphCiG4XHsACrSmPu1f+Kgw==}
 
-  '@virentia/core@0.6.4':
-    resolution: {integrity: sha512-KYhlw+HiRSUF3pnbuGCtqhgnoCKeyyqc2WTxhcorNbOEYN1GcEpdyaELEg9J8jTWppMmr9mjdqmsM0mF6LY8nQ==}
+  '@virentia/core@0.7.0':
+    resolution: {integrity: sha512-+6wjKfALn5zELWI9kAWVyUv2zeKT1WnHolSLSkZqDnmhvySQAgAuob7UkCcIRPXWqVrU2PDW2yqtZkXP/1lgmQ==}
 
   '@vitest/expect@0.34.6':
     resolution: {integrity: sha512-QUzKpUQRc1qC7qdGo7rMK3AkETI7w18gTCUrsNnyjjJKYiuUB9+TQK3QnR1unhCnWRC0AbKv2omLGQDF/mIjOw==}
@@ -2404,7 +2404,7 @@ snapshots:
     dependencies:
       undici-types: 8.3.0
 
-  '@virentia/core@0.6.4': {}
+  '@virentia/core@0.7.0': {}
 
   '@vitest/expect@0.34.6':
     dependencies:
