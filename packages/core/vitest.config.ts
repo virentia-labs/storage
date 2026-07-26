@@ -4,8 +4,12 @@ export default defineConfig({
   test: {
     cache: false,
     include: ["tests/**/*.spec.ts"],
-    // The type-level suite (tests/types/*.spec-d.ts) is validated by `tsc`
-    // (`pnpm test:types` / `pnpm typecheck`), not by the vitest runtime: its
-    // `.spec-d.ts` suffix is outside the runtime glob above.
+    // The type-level suite keeps its `.spec-d.ts` suffix, which is outside the
+    // runtime glob above. `vitest typecheck` picks it up only through this
+    // include — its own default matches `*.test-d.ts` and would find nothing.
+    // `pnpm typecheck` still covers the same files via the root tsconfig.
+    typecheck: {
+      include: ["tests/types/**/*.spec-d.ts"],
+    },
   },
 });
