@@ -1,6 +1,6 @@
 {
   "name": "@virentia/storage-core",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "",
   "keywords": [],
   "homepage": "https://movpushmov.dev/virentia/storage/core/",
@@ -33,15 +33,15 @@
   },
   "scripts": {
     "build": "tsdown",
-    "test": "vitest run && vitest typecheck --run --passWithNoTests",
+    "test": "vitest run && pnpm test:types",
     "test:watch": "vitest",
     "test:types": "tsc --noEmit -p ../../tsconfig.json"
   },
   "devDependencies": {
-    "@virentia/core": "^0.9.0",
-    "jsdom": "^25.0.1"
+    "@virentia/core": "^0.11.1",
+    "jsdom": "^30.1.1"
   },
   "peerDependencies": {
-    "@virentia/core": "^0.9.0"
+    "@virentia/core": "^0.11.1"
   }
 }

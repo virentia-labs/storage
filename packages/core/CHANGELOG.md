@@ -1,5 +1,11 @@
 # @virentia/storage-core
 
+## 0.2.0
+
+### Minor Changes
+
+- Require `@virentia/core` 0.11.1 or newer within the 0.11 series.
+
 ## 0.1.2
 
 ### Patch Changes
