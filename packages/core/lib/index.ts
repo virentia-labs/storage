@@ -9,4 +9,4 @@ export { custom } from "./custom";
 export type { CustomStorage } from "./custom";
 
 export { persist } from "./persist";
-export type { PersistOptions } from "./persist";
+export type { PersistOptions, PersistFieldOptions } from "./persist";

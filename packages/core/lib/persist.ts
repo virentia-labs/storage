@@ -1,4 +1,5 @@
 import { getCurrentScope, onCleanup, scoped } from "@virentia/core";
+import { boundStoreScopeOf } from "@virentia/core/internal";
 import type { Scope, StoreWritable } from "@virentia/core";
 
 import type { StorageBox } from "./box";
@@ -11,7 +12,8 @@ export interface PersistOptions<T> {
   /** Where to persist — `local()`, `session()`, `query()`, `memory()`, `custom()`. */
   storage: StorageBox;
   /**
-   * The scope whose value is persisted. Defaults to the current active scope
+   * The scope whose value is persisted. A bound model store uses its own scope;
+   * otherwise defaults to the current active scope
    * (call `persist` inside `scoped(scope, …)`). Persistence is inherently
    * per-scope: one browser has one `localStorage`, so a binding pairs exactly
    * one scope with the box.
@@ -23,6 +25,11 @@ export interface PersistOptions<T> {
   deserialize?: (raw: unknown) => T;
 }
 
+/** Model data fields expose the writable/subscription surface without operators. */
+export type PersistFieldOptions<T> = Omit<PersistOptions<T>, "source"> & {
+  source: Pick<StoreWritable<T>, "value" | "subscribe" | "writable">;
+};
+
 /**
  * Keep a Virentia store and a storage box in sync, both ways:
  *
@@ -32,13 +39,15 @@ export interface PersistOptions<T> {
  * 3. **box → store** — when the box supports `watch`, pull external changes
  *    (other tabs, back/forward) back into the store.
  *
- * A re-entrancy guard breaks the write↔watch feedback loop. If called inside an
- * `owner`, the binding is torn down on dispose; the returned `stop()` detaches
- * it manually.
+ * A re-entrancy guard breaks the write↔watch feedback loop. If called inside a
+ * model instance's bound method or `onCreate`, the binding is torn down with
+ * that instance. A low-level `owner` works too; `stop()` detaches it manually.
  */
-export function persist<T>(options: PersistOptions<T>): () => void {
+export function persist<T>(options: PersistOptions<T>): () => void;
+export function persist<T>(options: PersistFieldOptions<T>): () => void;
+export function persist<T>(options: PersistOptions<T> | PersistFieldOptions<T>): () => void {
   const { source, key, storage } = options;
-  const scope = options.scope ?? getCurrentScope();
+  const scope = boundStoreScopeOf(source) ?? options.scope ?? getCurrentScope();
 
   if (!scope) {
     throw new Error(
@@ -115,7 +124,8 @@ export function persist<T>(options: PersistOptions<T>): () => void {
     unwatch?.();
   };
 
-  // No-ops when there is no active owner.
+  // Bound model methods/onCreate provide the instance's task owner.
+  // Without a model or explicit owner, stop() remains the caller's responsibility.
   onCleanup(stop);
 
   return stop;
