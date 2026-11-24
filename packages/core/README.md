@@ -4,6 +4,8 @@ Persist [Virentia](https://movpushmov.dev/virentia) stores into pluggable storag
 
 ## Install
 
+Requires `@virentia/core` 0.11.2 or newer.
+
 ```sh
 pnpm add @virentia/storage-core @virentia/core
 ```
@@ -44,7 +46,39 @@ scoped(app, () => {
 - **store → box** — every committed change in the bound scope is written out.
 - **box → store** — external changes (another tab, back/forward) are pulled back in, when the box supports `watch`.
 
-`persist` returns a `stop()` disposer and, inside an `owner`, tears itself down on dispose. Pass `{ scope }` explicitly instead of relying on the ambient scope when you need to.
+`persist` returns a `stop()` disposer. In a bound `staticModel` method or `onCreate`, it also tears itself down with that instance. Explicit `owner` groups remain supported. Pass `{ scope }` explicitly instead of relying on the ambient scope when you need to.
+
+Model data fields, including owned children and referenced fields, are accepted
+as `source`. A bound field uses its own scope even when `persist` is called from
+its parent. The binding's cleanup belongs to the calling model; borrowing a
+field does not transfer ownership of that field.
+
+For a runtime model, declare stores once and connect storage through a bound method:
+
+```ts
+import { scope, scoped, store } from "@virentia/core";
+import { staticModel } from "@virentia/core/models";
+import { local, persist, type StorageBox } from "@virentia/storage-core";
+
+const Preferences = staticModel({
+  setup() {
+    const theme = store<"light" | "dark">("light");
+    return {
+      theme,
+      connect(storage: StorageBox) {
+        return persist({ source: theme, key: "theme", storage });
+      },
+    };
+  },
+});
+
+const preferences = scoped(scope(), () => Preferences.create({}));
+preferences.connect(local());
+preferences.theme.value = "dark";
+await preferences.dispose(); // detaches both directions for this instance
+```
+
+Do not open storage bindings in `setup`: it declares a shared graph, rather than an individual instance's resources. Different instances need separate boxes or storage keys when their persisted values should stay independent.
 
 ### Options
 
@@ -53,7 +87,7 @@ persist({
   source, // StoreWritable<T> — the store to persist
   key, // string — the box key
   storage, // StorageBox — local() | session() | query() | memory() | custom()
-  scope, // Scope — defaults to the current active scope
+  scope, // Scope — defaults to the current active scope; a bound field keeps its own scope
   serialize, // (value: T) => unknown — value → stored form
   deserialize, // (raw: unknown) => T — stored form → value
 });
