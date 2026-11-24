@@ -1,5 +1,20 @@
 # @virentia/storage-core
 
+## 0.2.1
+
+### Patch Changes
+
+- Bind persistence and cleanup to native model scopes.
+
+- Updated Virentia dependencies
+  - @virentia/core@0.12.0
+
+## 0.2.0
+
+### Minor Changes
+
+- Require `@virentia/core` 0.11.1 or newer within the 0.11 series.
+
 ## 0.1.2
 
 ### Patch Changes
