@@ -8,10 +8,9 @@
     "noEmit": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "ignoreDeprecations": "6.0",
-    "baseUrl": ".",
+    "types": ["node"],
     "paths": {
-      "@virentia/storage-core": ["packages/core/lib/index.ts"]
+      "@virentia/storage-core": ["./packages/core/lib/index.ts"]
     }
   },
   "include": [
